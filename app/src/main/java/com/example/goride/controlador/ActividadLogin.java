@@ -7,6 +7,8 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +27,11 @@ import com.google.android.material.textfield.TextInputEditText;
 public class ActividadLogin extends AppCompatActivity {
 
     private TextInputEditText campoUsuario;
-    private TextInputEditText campoContrasena;
+    private EditText digitoContrasena1;
+    private EditText digitoContrasena2;
+    private EditText digitoContrasena3;
+    private EditText digitoContrasena4;
+    private ImageView iconoBorrar;
     private Button botonIngresar;
 
     private RepositorioUsuario repositorioUsuario;
@@ -61,7 +67,11 @@ public class ActividadLogin extends AppCompatActivity {
      */
     private void inicializarVistas() {
         campoUsuario = findViewById(R.id.campoUsuario);
-        campoContrasena = findViewById(R.id.campoContrasena);
+        digitoContrasena1 = findViewById(R.id.digitoContrasena1);
+        digitoContrasena2 = findViewById(R.id.digitoContrasena2);
+        digitoContrasena3 = findViewById(R.id.digitoContrasena3);
+        digitoContrasena4 = findViewById(R.id.digitoContrasena4);
+        iconoBorrar = findViewById(R.id.iconoBorrar);
         botonIngresar = findViewById(R.id.botonIngresar);
     }
 
@@ -76,6 +86,12 @@ public class ActividadLogin extends AppCompatActivity {
             // Delay mínimo antes de procesar
             handler.postDelayed(this::iniciarSesion, 150);
         });
+
+        // Configurar navegación automática entre cuadros de contraseña
+        configurarNavegacionContrasena();
+
+        // Configurar botón de borrar
+        iconoBorrar.setOnClickListener(v -> borrarUltimoDigito());
 
         // Validación en tiempo real para campos
         configurarValidacionTiempoReal();
@@ -106,7 +122,67 @@ public class ActividadLogin extends AppCompatActivity {
         };
 
         campoUsuario.addTextChangedListener(validador);
-        campoContrasena.addTextChangedListener(validador);
+        digitoContrasena1.addTextChangedListener(validador);
+        digitoContrasena2.addTextChangedListener(validador);
+        digitoContrasena3.addTextChangedListener(validador);
+        digitoContrasena4.addTextChangedListener(validador);
+    }
+
+    /**
+     * Configura la navegación automática entre cuadros de contraseña
+     */
+    private void configurarNavegacionContrasena() {
+        // Navegar automáticamente al siguiente cuadro al escribir
+        configurarNavegacionDigito(digitoContrasena1, digitoContrasena2, null);
+        configurarNavegacionDigito(digitoContrasena2, digitoContrasena3, digitoContrasena1);
+        configurarNavegacionDigito(digitoContrasena3, digitoContrasena4, digitoContrasena2);
+        configurarNavegacionDigito(digitoContrasena4, null, digitoContrasena3);
+    }
+
+    /**
+     * Configura la navegación para un dígito específico
+     */
+    private void configurarNavegacionDigito(EditText actual, EditText siguiente, EditText anterior) {
+        actual.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() == 1 && siguiente != null) {
+                    // Mover al siguiente cuadro
+                    siguiente.requestFocus();
+                } else if (s.length() == 0 && anterior != null) {
+                    // Si se borra, regresar al anterior
+                    anterior.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Validar después de cada cambio
+                validarCamposYActivarBoton();
+            }
+        });
+    }
+
+    /**
+     * Borra el último dígito ingresado
+     */
+    private void borrarUltimoDigito() {
+        if (!digitoContrasena4.getText().toString().isEmpty()) {
+            digitoContrasena4.setText("");
+            digitoContrasena4.requestFocus();
+        } else if (!digitoContrasena3.getText().toString().isEmpty()) {
+            digitoContrasena3.setText("");
+            digitoContrasena3.requestFocus();
+        } else if (!digitoContrasena2.getText().toString().isEmpty()) {
+            digitoContrasena2.setText("");
+            digitoContrasena2.requestFocus();
+        } else if (!digitoContrasena1.getText().toString().isEmpty()) {
+            digitoContrasena1.setText("");
+            digitoContrasena1.requestFocus();
+        }
     }
 
     /**
@@ -114,14 +190,22 @@ public class ActividadLogin extends AppCompatActivity {
      */
     private void validarCamposYActivarBoton() {
         String usuario = obtenerTextoSeguro(campoUsuario);
-        String contrasena = obtenerTextoSeguro(campoContrasena);
+        String contrasena = obtenerContrasenaCompleta();
 
-        boolean camposValidos = !usuario.isEmpty() &&
-                               !contrasena.isEmpty() &&
-                               contrasena.length() >= 3;
+        boolean camposValidos = !usuario.isEmpty() && contrasena.length() == 4;
 
         botonIngresar.setEnabled(camposValidos);
         botonIngresar.setAlpha(camposValidos ? 1.0f : 0.6f);
+    }
+
+    /**
+     * Obtiene la contraseña completa de los 4 cuadros
+     */
+    private String obtenerContrasenaCompleta() {
+        return digitoContrasena1.getText().toString() +
+               digitoContrasena2.getText().toString() +
+               digitoContrasena3.getText().toString() +
+               digitoContrasena4.getText().toString();
     }
 
     /**
@@ -139,11 +223,11 @@ public class ActividadLogin extends AppCompatActivity {
      */
     private void iniciarSesion() {
         String nombreUsuario = obtenerTextoSeguro(campoUsuario);
-        String contrasena = obtenerTextoSeguro(campoContrasena);
+        String contrasena = obtenerContrasenaCompleta();
 
         // Validar campos vacíos
-        if (!ValidadorDatos.esTextoValido(nombreUsuario) || !ValidadorDatos.esTextoValido(contrasena)) {
-            mostrarMensaje(getString(R.string.error_campos_vacios));
+        if (!ValidadorDatos.esTextoValido(nombreUsuario) || contrasena.length() != 4) {
+            mostrarMensaje("Por favor completa todos los campos");
             return;
         }
 
@@ -162,7 +246,7 @@ public class ActividadLogin extends AppCompatActivity {
             // Ir al menú principal
             irAMenuPrincipal();
         } else {
-            mostrarMensaje(getString(R.string.error_credenciales));
+            mostrarMensaje("Usuario o contraseña incorrectos");
         }
     }
 

@@ -122,38 +122,103 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Campo de contraseña -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
+            <!-- Campo de contraseña con 4 cuadrados -->
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:hint="@string/contrasena"
-                app:startIconDrawable="@drawable/ic_lock_red"
-                app:startIconTint="#DC2626"
-                app:endIconMode="password_toggle"
-                app:boxStrokeColor="#DC2626"
-                app:hintTextColor="#DC2626"
-                app:endIconTint="#DC2626"
-                app:boxBackgroundColor="#F9FAFB"
-                app:boxCornerRadiusTopStart="16dp"
-                app:boxCornerRadiusTopEnd="16dp"
-                app:boxCornerRadiusBottomStart="16dp"
-                app:boxCornerRadiusBottomEnd="16dp"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                android:text="Ingresa tu clave Yape"
+                android:textSize="16sp"
+                android:textColor="#1A1A1A"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"/>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/campoContrasena"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:layout_marginBottom="32dp">
+
+                <EditText
+                    android:id="@+id/digitoContrasena1"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/password_box_selector"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
                     android:textColor="#1A1A1A"
-                    android:textColorHint="#9CA3AF"
-                    android:textSize="16sp"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"/>
+                    android:importantForAutofill="no" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+                <EditText
+                    android:id="@+id/digitoContrasena2"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/password_box_selector"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A1A"
+                    android:importantForAutofill="no" />
+
+                <EditText
+                    android:id="@+id/digitoContrasena3"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/password_box_selector"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A1A"
+                    android:importantForAutofill="no" />
+
+                <EditText
+                    android:id="@+id/digitoContrasena4"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/password_box_selector"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="1"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A1A"
+                    android:importantForAutofill="no" />
+
+            </LinearLayout>
+
+            <!-- Ícono de borrar -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iconoBorrar"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@android:drawable/ic_input_delete"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:padding="4dp"
+                    app:tint="#DC2626"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Borrar último dígito" />
+
+            </LinearLayout>
 
             <!-- Mensaje informativo -->
             <LinearLayout
