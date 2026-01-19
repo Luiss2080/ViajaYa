@@ -61,7 +61,7 @@
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="32dp"
         app:cardElevation="16dp"
-        app:cardCornerRadius="24dp">
+        app:cardCornerRadius="24dp"
         app:cardBackgroundColor="#FFFFFF">
 
         <LinearLayout
@@ -132,12 +132,14 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="16dp"/>
 
+            <!-- Fila con cuadrados de contraseña e ícono del ojo -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_gravity="center"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="24dp"
+                android:gravity="center_vertical">
 
                 <EditText
                     android:id="@+id/digitoContrasena1"
@@ -195,26 +197,18 @@
                     android:textColor="#1A1A1A"
                     android:importantForAutofill="no" />
 
-            </LinearLayout>
-
-            <!-- Ícono de ojo para mostrar/ocultar contraseña -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="24dp"
-                android:orientation="horizontal"
-                android:gravity="center">
-
+                <!-- Ícono de ojo para mostrar/ocultar contraseña -->
                 <ImageView
                     android:id="@+id/iconoMostrarContrasena"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="12dp"
                     android:src="@drawable/ic_eye_hide"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:padding="4dp"
+                    android:background="@drawable/password_box"
+                    android:padding="12dp"
                     android:clickable="true"
                     android:focusable="true"
+                    android:scaleType="centerInside"
                     android:contentDescription="Mostrar/Ocultar contraseña" />
 
             </LinearLayout>
