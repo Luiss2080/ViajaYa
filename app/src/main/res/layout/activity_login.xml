@@ -1,36 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:fillViewport="true">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@drawable/gradient_background"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="true"
+    android:paddingTop="32dp"
+    android:paddingBottom="32dp">
 
-    <!-- Espaciado superior flexible -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.5" />
-
-    <!-- Header con ícono mejorado -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+    <!-- Header con logo -->
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginBottom="32dp"
-        app:cardCornerRadius="50dp"
-        app:cardElevation="12dp"
-        app:cardBackgroundColor="@color/white">
-
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:src="@android:drawable/ic_menu_mylocation"
-            app:tint="#B91C3C"
-            android:contentDescription="@string/app_name" />
-    </androidx.cardview.widget.CardView>
+        android:src="@drawable/logo"
+        android:scaleType="fitCenter"
+        android:contentDescription="GoRide Logo" />
 
     <!-- Título principal -->
     <TextView
@@ -143,56 +135,56 @@
 
                 <EditText
                     android:id="@+id/digitoContrasena1"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="8dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="6dp"
                     android:background="@drawable/password_box_selector"
                     android:gravity="center"
                     android:inputType="numberPassword"
                     android:maxLength="1"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="#1A1A1A"
                     android:importantForAutofill="no" />
 
                 <EditText
                     android:id="@+id/digitoContrasena2"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="8dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="6dp"
                     android:background="@drawable/password_box_selector"
                     android:gravity="center"
                     android:inputType="numberPassword"
                     android:maxLength="1"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="#1A1A1A"
                     android:importantForAutofill="no" />
 
                 <EditText
                     android:id="@+id/digitoContrasena3"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="8dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="6dp"
                     android:background="@drawable/password_box_selector"
                     android:gravity="center"
                     android:inputType="numberPassword"
                     android:maxLength="1"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="#1A1A1A"
                     android:importantForAutofill="no" />
 
                 <EditText
                     android:id="@+id/digitoContrasena4"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="8dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="6dp"
                     android:background="@drawable/password_box_selector"
                     android:gravity="center"
                     android:inputType="numberPassword"
                     android:maxLength="1"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="#1A1A1A"
                     android:importantForAutofill="no" />
@@ -200,15 +192,15 @@
                 <!-- Ícono de ojo para mostrar/ocultar contraseña -->
                 <ImageView
                     android:id="@+id/iconoMostrarContrasena"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginStart="12dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="16dp"
                     android:src="@drawable/ic_eye_hide"
-                    android:background="@drawable/eye_button_background"
-                    android:padding="16dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:padding="4dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:scaleType="centerInside"
+                    android:scaleType="fitCenter"
                     android:contentDescription="Mostrar/Ocultar contraseña" />
 
             </LinearLayout>
@@ -247,24 +239,21 @@
                 android:id="@+id/botonIngresar"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="@string/boton_ingresar"
+                android:text="INGRESAR"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
-                android:background="@drawable/button_gradient"
+                android:background="@drawable/button_login_background"
                 android:textAllCaps="false"
-                android:elevation="8dp"
+                android:enabled="false"
+                android:stateListAnimator="@null"
+                android:elevation="0dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"/>
 
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-
-    <!-- Espaciado inferior flexible -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2" />
 
     <!-- Información de versión -->
     <TextView
@@ -277,3 +266,6 @@
         android:layout_marginBottom="32dp"/>
 
 </LinearLayout>
+
+</ScrollView>
+

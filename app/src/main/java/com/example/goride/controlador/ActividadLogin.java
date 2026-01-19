@@ -205,8 +205,10 @@ public class ActividadLogin extends AppCompatActivity {
 
         boolean camposValidos = !usuario.isEmpty() && contrasena.length() == 4;
 
+        // Habilitar/deshabilitar el botón pero mantener siempre la misma apariencia visual
         botonIngresar.setEnabled(camposValidos);
-        botonIngresar.setAlpha(camposValidos ? 1.0f : 0.6f);
+        // No cambiar la alpha para mantener siempre la misma tonalidad
+        botonIngresar.setAlpha(1.0f);
     }
 
     /**

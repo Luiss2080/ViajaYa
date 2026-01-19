@@ -21,8 +21,8 @@
         <item name="colorOnBackground">@color/text_primary</item>
 
         <!-- Estado de la barra de estado -->
-        <item name="android:statusBarColor">@color/black_primary</item>
-        <item name="android:navigationBarColor">@color/black_primary</item>
+        <item name="android:statusBarColor">@color/red_primary</item>
+        <item name="android:navigationBarColor">@color/red_primary</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
 
@@ -45,10 +45,18 @@
 
     <!-- Estilo para botones principales -->
     <style name="ButtonStyle.Primary" parent="Widget.Material3.Button">
-        <item name="backgroundTint">@color/red_accent</item>
+        <item name="backgroundTint">@color/red_primary</item>
         <item name="android:textColor">@color/white</item>
         <item name="cornerRadius">12dp</item>
         <item name="android:minHeight">48dp</item>
+    </style>
+
+    <!-- Estilo para botón de login - siempre mismo color -->
+    <style name="ButtonStyle.Login" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/red_primary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:elevation">0dp</item>
     </style>
 
     <!-- Estilo para TextInputLayout -->
