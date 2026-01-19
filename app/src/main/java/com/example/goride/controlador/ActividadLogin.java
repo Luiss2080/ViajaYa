@@ -31,8 +31,9 @@ public class ActividadLogin extends AppCompatActivity {
     private EditText digitoContrasena2;
     private EditText digitoContrasena3;
     private EditText digitoContrasena4;
-    private ImageView iconoBorrar;
+    private ImageView iconoMostrarContrasena;
     private Button botonIngresar;
+    private boolean contrasenaVisible = false;
 
     private RepositorioUsuario repositorioUsuario;
     private GestorSesion gestorSesion;
@@ -71,7 +72,7 @@ public class ActividadLogin extends AppCompatActivity {
         digitoContrasena2 = findViewById(R.id.digitoContrasena2);
         digitoContrasena3 = findViewById(R.id.digitoContrasena3);
         digitoContrasena4 = findViewById(R.id.digitoContrasena4);
-        iconoBorrar = findViewById(R.id.iconoBorrar);
+        iconoMostrarContrasena = findViewById(R.id.iconoMostrarContrasena);
         botonIngresar = findViewById(R.id.botonIngresar);
     }
 
@@ -90,8 +91,8 @@ public class ActividadLogin extends AppCompatActivity {
         // Configurar navegación automática entre cuadros de contraseña
         configurarNavegacionContrasena();
 
-        // Configurar botón de borrar
-        iconoBorrar.setOnClickListener(v -> borrarUltimoDigito());
+        // Configurar ícono de mostrar/ocultar contraseña
+        iconoMostrarContrasena.setOnClickListener(v -> alternarVisibilidadContrasena());
 
         // Validación en tiempo real para campos
         configurarValidacionTiempoReal();
@@ -167,22 +168,32 @@ public class ActividadLogin extends AppCompatActivity {
     }
 
     /**
-     * Borra el último dígito ingresado
+     * Alterna la visibilidad de la contraseña entre números y puntos
      */
-    private void borrarUltimoDigito() {
-        if (!digitoContrasena4.getText().toString().isEmpty()) {
-            digitoContrasena4.setText("");
-            digitoContrasena4.requestFocus();
-        } else if (!digitoContrasena3.getText().toString().isEmpty()) {
-            digitoContrasena3.setText("");
-            digitoContrasena3.requestFocus();
-        } else if (!digitoContrasena2.getText().toString().isEmpty()) {
-            digitoContrasena2.setText("");
-            digitoContrasena2.requestFocus();
-        } else if (!digitoContrasena1.getText().toString().isEmpty()) {
-            digitoContrasena1.setText("");
-            digitoContrasena1.requestFocus();
+    private void alternarVisibilidadContrasena() {
+        contrasenaVisible = !contrasenaVisible;
+
+        if (contrasenaVisible) {
+            // Mostrar números
+            digitoContrasena1.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+            digitoContrasena2.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+            digitoContrasena3.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+            digitoContrasena4.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+            iconoMostrarContrasena.setImageResource(R.drawable.ic_eye_show);
+        } else {
+            // Ocultar con puntos
+            digitoContrasena1.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+            digitoContrasena2.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+            digitoContrasena3.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+            digitoContrasena4.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+            iconoMostrarContrasena.setImageResource(R.drawable.ic_eye_hide);
         }
+
+        // Restaurar el cursor al final del texto en todos los campos
+        digitoContrasena1.setSelection(digitoContrasena1.getText().length());
+        digitoContrasena2.setSelection(digitoContrasena2.getText().length());
+        digitoContrasena3.setSelection(digitoContrasena3.getText().length());
+        digitoContrasena4.setSelection(digitoContrasena4.getText().length());
     }
 
     /**
