@@ -200,12 +200,12 @@
                 <!-- Ícono de ojo para mostrar/ocultar contraseña -->
                 <ImageView
                     android:id="@+id/iconoMostrarContrasena"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:layout_marginStart="12dp"
                     android:src="@drawable/ic_eye_hide"
-                    android:background="@drawable/password_box"
-                    android:padding="12dp"
+                    android:background="@drawable/eye_button_background"
+                    android:padding="16dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:scaleType="centerInside"
