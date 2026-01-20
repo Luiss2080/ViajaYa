@@ -25,6 +25,7 @@
         <!-- Activity de Login -->
         <activity
             android:name=".controlador.ActividadLogin"
+            android:theme="@style/Theme.GoRide.Login"
             android:exported="false" />
 
         <!-- Activity de MenÃº Principal -->

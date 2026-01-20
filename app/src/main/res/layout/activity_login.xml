@@ -81,7 +81,31 @@
                 android:textSize="14sp"
                 android:textColor="#6B7280"
                 android:layout_gravity="center"
-                android:layout_marginBottom="32dp"/>
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Mensaje dinámico -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardMensajeDinamico"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="#F8F9FA"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/mensajeDinamico"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"
+                    android:padding="16dp"
+                    android:textColor="#6B7280"
+                    android:background="@android:color/transparent" />
+
+            </androidx.cardview.widget.CardView>
 
             <!-- Campo de usuario -->
             <com.google.android.material.textfield.TextInputLayout
@@ -203,34 +227,6 @@
                     android:scaleType="fitCenter"
                     android:contentDescription="Mostrar/Ocultar contraseña" />
 
-            </LinearLayout>
-
-            <!-- Mensaje informativo -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="32dp"
-                android:background="#F0F0F0"
-                android:padding="12dp"
-                android:layout_marginHorizontal="4dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@android:drawable/ic_dialog_info"
-                    android:layout_marginEnd="8dp"
-                    app:tint="#DC2626"
-                    android:contentDescription="Información" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Ingresa tus credenciales para continuar"
-                    android:textSize="12sp"
-                    android:textColor="#2D2D2D"/>
 
             </LinearLayout>
 
@@ -243,11 +239,8 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
-                android:background="@drawable/button_login_background"
+                android:backgroundTint="#B91C3C"
                 android:textAllCaps="false"
-                android:enabled="false"
-                android:stateListAnimator="@null"
-                android:elevation="0dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"/>
 

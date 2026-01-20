@@ -43,6 +43,16 @@
         <!-- Personalizaciones específicas de la app -->
     </style>
 
+    <!-- Tema específico para Login con fondo rojo completo -->
+    <style name="Theme.GoRide.Login" parent="Base.Theme.GoRide">
+        <item name="android:statusBarColor">#B91C3C</item>
+        <item name="android:navigationBarColor">#B91C3C</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+    </style>
+
     <!-- Estilo para botones principales -->
     <style name="ButtonStyle.Primary" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/red_primary</item>

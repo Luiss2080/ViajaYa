@@ -6,12 +6,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.example.goride.R;
 import com.example.goride.modelo.entidades.Usuario;
@@ -33,15 +37,35 @@ public class ActividadLogin extends AppCompatActivity {
     private EditText digitoContrasena4;
     private ImageView iconoMostrarContrasena;
     private Button botonIngresar;
+    private TextView mensajeDinamico;
+    private CardView cardMensajeDinamico;
     private boolean contrasenaVisible = false;
 
     private RepositorioUsuario repositorioUsuario;
     private GestorSesion gestorSesion;
     private final Handler handler = new Handler(Looper.getMainLooper());
 
+    // Estados de mensaje
+    private static final int MENSAJE_BIENVENIDA = 0;
+    private static final int MENSAJE_COMPLETAR = 1;
+    private static final int MENSAJE_ERROR = 2;
+    private static final int MENSAJE_EXITO = 3;
+
+    private int intentosFallidos = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Configurar colores de barras del sistema para consistencia visual
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(android.R.color.transparent));
+            getWindow().setNavigationBarColor(0xFFB91C3C); // Color rojo consistente
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                getWindow().getDecorView().setSystemUiVisibility(0); // No light status bar
+            }
+        }
+
 
         // Inicializar repositorios
         repositorioUsuario = new RepositorioUsuario(this);
@@ -74,6 +98,68 @@ public class ActividadLogin extends AppCompatActivity {
         digitoContrasena4 = findViewById(R.id.digitoContrasena4);
         iconoMostrarContrasena = findViewById(R.id.iconoMostrarContrasena);
         botonIngresar = findViewById(R.id.botonIngresar);
+        mensajeDinamico = findViewById(R.id.mensajeDinamico);
+        cardMensajeDinamico = findViewById(R.id.cardMensajeDinamico);
+    }
+
+    /**
+     * Muestra mensajes dinámicos según el estado
+     */
+    private void mostrarMensajeDinamico(int tipoMensaje, String usuarioIngresado) {
+        if (mensajeDinamico == null) return;
+
+        String mensaje;
+        int color;
+
+        switch (tipoMensaje) {
+            case MENSAJE_BIENVENIDA:
+                mensaje = "¡Bienvenido a GoRide! 🚗\nIngresa tus credenciales para continuar";
+                color = ContextCompat.getColor(this, android.R.color.darker_gray);
+                break;
+
+            case MENSAJE_COMPLETAR:
+                mensaje = "Completa todos los campos para continuar";
+                color = ContextCompat.getColor(this, android.R.color.holo_orange_dark);
+                break;
+
+            case MENSAJE_ERROR:
+                intentosFallidos++;
+                if (intentosFallidos == 1) {
+                    mensaje = "❌ Credenciales incorrectas\nVerifica tu usuario y contraseña";
+                } else if (intentosFallidos == 2) {
+                    mensaje = "❌ Intento fallido nuevamente\n¿Olvidaste tu contraseña?";
+                } else {
+                    mensaje = "❌ Múltiples intentos fallidos\nRevisa las credenciales en la documentación";
+                }
+                color = ContextCompat.getColor(this, android.R.color.holo_red_dark);
+                break;
+
+            case MENSAJE_EXITO:
+                if (usuarioIngresado != null) {
+                    mensaje = "✅ ¡Bienvenido, " + usuarioIngresado + "!\nIngresando al sistema...";
+                } else {
+                    mensaje = "✅ Acceso autorizado\nIngresando al sistema...";
+                }
+                color = ContextCompat.getColor(this, android.R.color.holo_green_dark);
+                intentosFallidos = 0; // Resetear contador
+                break;
+
+            default:
+                mensaje = "Ingresa tus credenciales";
+                color = ContextCompat.getColor(this, android.R.color.darker_gray);
+                break;
+        }
+
+        mensajeDinamico.setText(mensaje);
+        mensajeDinamico.setTextColor(color);
+        mensajeDinamico.setVisibility(View.VISIBLE);
+
+        // Animación suave de aparición
+        mensajeDinamico.setAlpha(0f);
+        mensajeDinamico.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .start();
     }
 
     /**
@@ -205,10 +291,10 @@ public class ActividadLogin extends AppCompatActivity {
 
         boolean camposValidos = !usuario.isEmpty() && contrasena.length() == 4;
 
-        // Habilitar/deshabilitar el botón pero mantener siempre la misma apariencia visual
+        // Solo habilitar/deshabilitar funcionalidad, mantener apariencia visual consistente
         botonIngresar.setEnabled(camposValidos);
-        // No cambiar la alpha para mantener siempre la misma tonalidad
-        botonIngresar.setAlpha(1.0f);
+        botonIngresar.setAlpha(1.0f); // Siempre completamente opaco
+        botonIngresar.setVisibility(android.view.View.VISIBLE); // Asegurar que sea visible
     }
 
     /**
@@ -277,6 +363,78 @@ public class ActividadLogin extends AppCompatActivity {
      */
     private void mostrarMensaje(String mensaje) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Muestra un mensaje dinámico según el estado de la aplicación
+     */
+    private void mostrarMensajeDinamico(int tipoMensaje, String nombreCompleto) {
+        String mensaje;
+        int colorFondo;
+        int colorTexto;
+
+        switch (tipoMensaje) {
+            case MENSAJE_BIENVENIDA:
+                mensaje = "¡Bienvenido a GoRide! 🚗\nIngresa tus credenciales para continuar";
+                colorFondo = 0xFFF8F9FA;
+                colorTexto = 0xFF6B7280;
+                break;
+
+            case MENSAJE_COMPLETAR:
+                mensaje = "⚠️ Por favor completa todos los campos\nUsuario y los 4 dígitos de la contraseña";
+                colorFondo = 0xFFFEF3C7;
+                colorTexto = 0xFF92400E;
+                break;
+
+            case MENSAJE_ERROR:
+                String mensajeBase = "❌ Usuario o contraseña incorrectos\n";
+                if (intentosFallidos == 1) {
+                    mensaje = mensajeBase + "Revisa las credenciales en la carpeta docs/CREDENCIALES.md";
+                } else if (intentosFallidos >= 2) {
+                    mensaje = mensajeBase + "¿Necesitas ayuda? Verifica: admin/1234, conductor/5678, pasajero/9999";
+                } else {
+                    mensaje = mensajeBase + "Intenta de nuevo";
+                }
+                colorFondo = 0xFFFEE2E2;
+                colorTexto = 0xFFDC2626;
+                break;
+
+            case MENSAJE_EXITO:
+                mensaje = "✅ ¡Bienvenido " + (nombreCompleto != null ? nombreCompleto : "Usuario") + "!\n" +
+                         "Acceso concedido, redirigiendo...";
+                colorFondo = 0xFFDCFCE7;
+                colorTexto = 0xFF065F46;
+                break;
+
+            default:
+                return;
+        }
+
+        // Configurar el mensaje
+        mensajeDinamico.setText(mensaje);
+        mensajeDinamico.setTextColor(colorTexto);
+        cardMensajeDinamico.setCardBackgroundColor(colorFondo);
+
+        // Mostrar con animación
+        cardMensajeDinamico.setVisibility(View.VISIBLE);
+        cardMensajeDinamico.setAlpha(0f);
+        cardMensajeDinamico.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .start();
+
+        // Auto-ocultar después de cierto tiempo (excepto para éxito que se mantiene)
+        if (tipoMensaje != MENSAJE_EXITO) {
+            handler.postDelayed(() -> {
+                if (cardMensajeDinamico.getVisibility() == View.VISIBLE) {
+                    cardMensajeDinamico.animate()
+                            .alpha(0f)
+                            .setDuration(300)
+                            .withEndAction(() -> cardMensajeDinamico.setVisibility(View.GONE))
+                            .start();
+                }
+            }, 4000);
+        }
     }
 
     /**
