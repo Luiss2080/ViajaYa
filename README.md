@@ -1,4 +1,4 @@
-# GoRide
+# ViajaYa
 
 Aplicación Android académica (Java) inspirada en servicios de transporte tipo
 Yango/Uber, organizada con el patrón **Modelo-Vista-Controlador** y persistencia
