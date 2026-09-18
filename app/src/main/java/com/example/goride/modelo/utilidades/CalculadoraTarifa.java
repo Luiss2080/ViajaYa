@@ -5,12 +5,15 @@ import com.example.goride.modelo.entidades.Servicio;
 public class CalculadoraTarifa {
 
     public static double calcularTarifa(Servicio servicio, double distanciaKm) {
-        if (servicio == null || distanciaKm < 0) {
+        // NaN e infinito no cumplen "< 0" y producirían una tarifa NaN/Infinity
+        if (servicio == null || Double.isNaN(distanciaKm) || Double.isInfinite(distanciaKm) || distanciaKm < 0) {
             return 0.0;
         }
         double precioBase = servicio.getPrecioBase();
         double precioPorKm = servicio.getPrecioPorKilometro();
-        return precioBase + (distanciaKm * precioPorKm);
+        // Un servicio mal configurado (precios negativos) nunca debe dar una tarifa negativa
+        double tarifa = Math.max(0.0, precioBase) + distanciaKm * Math.max(0.0, precioPorKm);
+        return Double.isFinite(tarifa) ? tarifa : 0.0;
     }
 
     public static double calcularTarifaRedondeada(Servicio servicio, double distanciaKm) {
@@ -19,7 +22,7 @@ public class CalculadoraTarifa {
     }
 
     public static String formatearTarifa(double tarifa) {
-        return String.format("$%.2f", tarifa);
+        return String.format(java.util.Locale.US, "$%.2f", tarifa);
     }
 }
 
