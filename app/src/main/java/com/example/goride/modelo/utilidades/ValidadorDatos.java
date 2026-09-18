@@ -13,33 +13,34 @@ public class ValidadorDatos {
     }
 
     /**
-     * Valida que un nombre de usuario sea válido
+     * Valida que un nombre de usuario sea válido (mínimo 3 caracteres, sin espacios)
      */
     public static boolean esNombreUsuarioValido(String nombreUsuario) {
-        return esTextoValido(nombreUsuario) && nombreUsuario.length() >= 3;
+        return esTextoValido(nombreUsuario)
+                && nombreUsuario.length() >= 3
+                && !nombreUsuario.matches(".*\\s.*");
     }
 
     /**
-     * Valida que una contraseña sea válida
+     * Valida el PIN de acceso: exactamente 4 dígitos, que es lo que admite la pantalla de login.
      */
-    public static boolean esContrasenaValida(String contrasena) {
-        return esTextoValido(contrasena) && contrasena.length() >= 4;
+    public static boolean esPinValido(String pin) {
+        return pin != null && pin.matches("\\d{4}");
     }
 
     /**
-     * Valida que un correo sea válido
+     * Valida que un correo tenga forma usuario@dominio.tld (sin espacios ni varias arrobas)
      */
     public static boolean esCorreoValido(String correo) {
         if (!esTextoValido(correo)) return false;
-        return correo.contains("@") && correo.contains(".");
+        return correo.matches("[^@\\s]+@[^@\\s.]+(\\.[^@\\s.]+)+");
     }
 
     /**
-     * Valida que un teléfono sea válido
+     * Valida que un teléfono tenga solo dígitos, entre 8 y 15
      */
     public static boolean esTelefonoValido(String telefono) {
         if (!esTextoValido(telefono)) return false;
-        return telefono.length() >= 8 && telefono.matches("\\d+");
+        return telefono.matches("\\d{8,15}");
     }
 }
-
