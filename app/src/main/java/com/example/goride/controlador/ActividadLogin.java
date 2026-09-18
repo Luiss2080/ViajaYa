@@ -103,66 +103,6 @@ public class ActividadLogin extends AppCompatActivity {
     }
 
     /**
-     * Muestra mensajes dinámicos según el estado
-     */
-    private void mostrarMensajeDinamico(int tipoMensaje, String usuarioIngresado) {
-        if (mensajeDinamico == null) return;
-
-        String mensaje;
-        int color;
-
-        switch (tipoMensaje) {
-            case MENSAJE_BIENVENIDA:
-                mensaje = "¡Bienvenido a GoRide! 🚗\nIngresa tus credenciales para continuar";
-                color = ContextCompat.getColor(this, android.R.color.darker_gray);
-                break;
-
-            case MENSAJE_COMPLETAR:
-                mensaje = "Completa todos los campos para continuar";
-                color = ContextCompat.getColor(this, android.R.color.holo_orange_dark);
-                break;
-
-            case MENSAJE_ERROR:
-                intentosFallidos++;
-                if (intentosFallidos == 1) {
-                    mensaje = "❌ Credenciales incorrectas\nVerifica tu usuario y contraseña";
-                } else if (intentosFallidos == 2) {
-                    mensaje = "❌ Intento fallido nuevamente\n¿Olvidaste tu contraseña?";
-                } else {
-                    mensaje = "❌ Múltiples intentos fallidos\nRevisa las credenciales en la documentación";
-                }
-                color = ContextCompat.getColor(this, android.R.color.holo_red_dark);
-                break;
-
-            case MENSAJE_EXITO:
-                if (usuarioIngresado != null) {
-                    mensaje = "✅ ¡Bienvenido, " + usuarioIngresado + "!\nIngresando al sistema...";
-                } else {
-                    mensaje = "✅ Acceso autorizado\nIngresando al sistema...";
-                }
-                color = ContextCompat.getColor(this, android.R.color.holo_green_dark);
-                intentosFallidos = 0; // Resetear contador
-                break;
-
-            default:
-                mensaje = "Ingresa tus credenciales";
-                color = ContextCompat.getColor(this, android.R.color.darker_gray);
-                break;
-        }
-
-        mensajeDinamico.setText(mensaje);
-        mensajeDinamico.setTextColor(color);
-        mensajeDinamico.setVisibility(View.VISIBLE);
-
-        // Animación suave de aparición
-        mensajeDinamico.setAlpha(0f);
-        mensajeDinamico.animate()
-                .alpha(1f)
-                .setDuration(300)
-                .start();
-    }
-
-    /**
      * Configura los eventos de los componentes
      */
     private void configurarEventos() {
@@ -326,7 +266,7 @@ public class ActividadLogin extends AppCompatActivity {
 
         // Validar campos vacíos
         if (!ValidadorDatos.esTextoValido(nombreUsuario) || contrasena.length() != 4) {
-            mostrarMensaje("Por favor completa todos los campos");
+            mostrarMensajeDinamico(MENSAJE_COMPLETAR, null);
             return;
         }
 
@@ -345,7 +285,8 @@ public class ActividadLogin extends AppCompatActivity {
             // Ir al menú principal
             irAMenuPrincipal();
         } else {
-            mostrarMensaje("Usuario o contraseña incorrectos");
+            intentosFallidos++;
+            mostrarMensajeDinamico(MENSAJE_ERROR, null);
         }
     }
 
@@ -387,13 +328,12 @@ public class ActividadLogin extends AppCompatActivity {
                 break;
 
             case MENSAJE_ERROR:
-                String mensajeBase = "❌ Usuario o contraseña incorrectos\n";
-                if (intentosFallidos == 1) {
-                    mensaje = mensajeBase + "Revisa las credenciales en la carpeta docs/CREDENCIALES.md";
-                } else if (intentosFallidos >= 2) {
-                    mensaje = mensajeBase + "¿Necesitas ayuda? Verifica: admin/1234, conductor/5678, pasajero/9999";
+                if (intentosFallidos >= 2) {
+                    mensaje = "❌ Usuario o contraseña incorrectos
+Intentos fallidos: " + intentosFallidos;
                 } else {
-                    mensaje = mensajeBase + "Intenta de nuevo";
+                    mensaje = "❌ Usuario o contraseña incorrectos
+Intenta de nuevo";
                 }
                 colorFondo = 0xFFFEE2E2;
                 colorTexto = 0xFFDC2626;
@@ -453,5 +393,12 @@ public class ActividadLogin extends AppCompatActivity {
                             .setDuration(100)
                             .start()
                 ).start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Evita que callbacks pendientes toquen vistas de una actividad destruida
+        handler.removeCallbacksAndMessages(null);
+        super.onDestroy();
     }
 }
