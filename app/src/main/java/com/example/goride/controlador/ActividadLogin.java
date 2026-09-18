@@ -366,11 +366,9 @@ public class ActividadLogin extends AppCompatActivity {
 
             case MENSAJE_ERROR:
                 if (intentosFallidos >= 2) {
-                    mensaje = "❌ Usuario o contraseña incorrectos
-Intentos fallidos: " + intentosFallidos;
+                    mensaje = "❌ Usuario o contraseña incorrectos\nIntentos fallidos: " + intentosFallidos;
                 } else {
-                    mensaje = "❌ Usuario o contraseña incorrectos
-Intenta de nuevo";
+                    mensaje = "❌ Usuario o contraseña incorrectos\nIntenta de nuevo";
                 }
                 colorFondo = 0xFFFEE2E2;
                 colorTexto = 0xFFDC2626;
