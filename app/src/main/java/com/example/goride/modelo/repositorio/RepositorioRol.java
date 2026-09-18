@@ -48,5 +48,10 @@ public class RepositorioRol {
     public boolean existeNombre(String nombreRol) {
         return rolDao.verificarExistenciaNombre(nombreRol) > 0;
     }
-}
 
+    /** Nombre del rol o null si no existe (para decisiones de autorización). */
+    public String obtenerNombrePorId(int idRol) {
+        Rol rol = rolDao.obtenerPorId(idRol);
+        return rol != null ? rol.getNombreRol() : null;
+    }
+}

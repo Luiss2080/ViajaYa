@@ -11,7 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.goride.R;
 import com.example.goride.controlador.usuario.ActividadListaUsuarios;
+import com.example.goride.modelo.repositorio.RepositorioRol;
 import com.example.goride.modelo.utilidades.GestorSesion;
+import com.example.goride.modelo.utilidades.PoliticaAcceso;
 
 /**
  * Controlador para el menú principal de la aplicación
@@ -84,6 +86,11 @@ public class ActividadMenuPrincipal extends AppCompatActivity {
      * Abre la gestión de usuarios
      */
     private void abrirGestionUsuarios() {
+        String rol = new RepositorioRol(this).obtenerNombrePorId(gestorSesion.obtenerIdRol());
+        if (!PoliticaAcceso.puedeGestionarUsuarios(rol)) {
+            Toast.makeText(this, "No tienes permiso para gestionar usuarios", Toast.LENGTH_SHORT).show();
+            return;
+        }
         Intent intent = new Intent(this, ActividadListaUsuarios.class);
         startActivity(intent);
     }

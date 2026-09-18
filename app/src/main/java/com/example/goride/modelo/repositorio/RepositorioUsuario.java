@@ -28,8 +28,8 @@ public class RepositorioUsuario {
     public Usuario obtenerPorNombreUsuario(String nombreUsuario) {
         return usuarioDao.obtenerPorNombreUsuario(nombreUsuario);
     }
-    public Usuario autenticar(String nombreUsuario, String contrasena) {
-        return usuarioDao.autenticar(nombreUsuario, contrasena);
+    public Usuario obtenerPorCorreo(String correo) {
+        return usuarioDao.obtenerPorCorreo(correo);
     }
     public List<Usuario> obtenerPorRol(int idRol) {
         return usuarioDao.obtenerPorRol(idRol);
