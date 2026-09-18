@@ -14,6 +14,9 @@ import com.example.goride.modelo.entidades.Rol;
 import com.example.goride.modelo.entidades.Usuario;
 import com.example.goride.modelo.repositorio.RepositorioRol;
 import com.example.goride.modelo.repositorio.RepositorioUsuario;
+import com.example.goride.modelo.utilidades.GestorSesion;
+import com.example.goride.modelo.utilidades.HashContrasena;
+import com.example.goride.modelo.utilidades.PoliticaAcceso;
 import com.example.goride.modelo.utilidades.UtilidadesFecha;
 import com.example.goride.modelo.utilidades.ValidadorDatos;
 import com.google.android.material.textfield.TextInputEditText;
@@ -48,10 +51,17 @@ public class ActividadFormularioUsuario extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_formulario_usuario);
-
         repositorioUsuario = new RepositorioUsuario(this);
         repositorioRol = new RepositorioRol(this);
+
+        GestorSesion sesion = new GestorSesion(this);
+        String rolActual = repositorioRol.obtenerNombrePorId(sesion.obtenerIdRol());
+        if (!sesion.haySesionActiva() || !PoliticaAcceso.puedeGestionarUsuarios(rolActual)) {
+            Toast.makeText(this, "No tienes permiso para gestionar usuarios", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+        setContentView(R.layout.activity_formulario_usuario);
 
         // Verificar si es edición
         if (getIntent().hasExtra("idUsuario")) {
@@ -141,7 +151,8 @@ public class ActividadFormularioUsuario extends AppCompatActivity {
         if (usuario != null) {
             campoNombreCompleto.setText(usuario.getNombreCompleto());
             campoNombreUsuario.setText(usuario.getNombreUsuario());
-            campoContrasena.setText(usuario.getContrasena());
+            // Nunca se muestra el hash; vacío = conservar el PIN actual
+            campoContrasena.setHint("Nuevo PIN de 4 dígitos (vacío = no cambiar)");
             campoCorreo.setText(usuario.getCorreoElectronico());
             campoTelefono.setText(usuario.getTelefono());
 
@@ -154,7 +165,7 @@ public class ActividadFormularioUsuario extends AppCompatActivity {
             }
 
             // Seleccionar estado
-            if (usuario.getEstado().equals("Activo")) {
+            if ("Activo".equals(usuario.getEstado())) {
                 spinnerEstado.setSelection(0);
             } else {
                 spinnerEstado.setSelection(1);
@@ -176,6 +187,10 @@ public class ActividadFormularioUsuario extends AppCompatActivity {
         String estado = spinnerEstado.getSelectedItem().toString();
 
         // Validaciones
+        if (roles.isEmpty()) {
+            mostrarMensaje("No hay roles activos disponibles");
+            return;
+        }
         if (!validarCampos(nombreCompleto, nombreUsuario, contrasena, correo, telefono)) {
             return;
         }
@@ -184,9 +199,19 @@ public class ActividadFormularioUsuario extends AppCompatActivity {
         Usuario usuario;
         if (esEdicion) {
             usuario = repositorioUsuario.obtenerPorId(idUsuarioEditar);
+            if (usuario == null) {
+                mostrarMensaje(getString(R.string.mensaje_error_actualizar));
+                finish();
+                return;
+            }
+            if (existeDuplicado(nombreUsuario, correo, usuario.getIdUsuario())) {
+                return;
+            }
             usuario.setNombreCompleto(nombreCompleto);
             usuario.setNombreUsuario(nombreUsuario);
-            usuario.setContrasena(contrasena);
+            if (!contrasena.isEmpty()) {
+                usuario.setContrasena(HashContrasena.generar(contrasena));
+            }
             usuario.setCorreoElectronico(correo);
             usuario.setTelefono(telefono);
             usuario.setIdRol(roles.get(posicionRol).getIdRol());
@@ -195,9 +220,12 @@ public class ActividadFormularioUsuario extends AppCompatActivity {
             repositorioUsuario.actualizar(usuario);
             mostrarMensaje(getString(R.string.mensaje_exito_actualizar));
         } else {
+            if (existeDuplicado(nombreUsuario, correo, -1)) {
+                return;
+            }
             usuario = new Usuario(
                 nombreUsuario,
-                contrasena,
+                HashContrasena.generar(contrasena),
                 nombreCompleto,
                 correo,
                 telefono,
@@ -214,6 +242,24 @@ public class ActividadFormularioUsuario extends AppCompatActivity {
     }
 
     /**
+     * Comprueba que usuario y correo no pertenezcan a otra cuenta (el índice único de la base
+     * lanzaría SQLiteConstraintException y cerraría la app).
+     */
+    private boolean existeDuplicado(String nombreUsuario, String correo, int idPropio) {
+        Usuario porNombre = repositorioUsuario.obtenerPorNombreUsuario(nombreUsuario);
+        if (porNombre != null && porNombre.getIdUsuario() != idPropio) {
+            mostrarMensaje("Ese nombre de usuario ya está en uso");
+            return true;
+        }
+        Usuario porCorreo = repositorioUsuario.obtenerPorCorreo(correo);
+        if (porCorreo != null && porCorreo.getIdUsuario() != idPropio) {
+            mostrarMensaje("Ese correo ya está registrado");
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Valida los campos del formulario
      */
     private boolean validarCampos(String nombreCompleto, String nombreUsuario,
@@ -224,12 +270,14 @@ public class ActividadFormularioUsuario extends AppCompatActivity {
         }
 
         if (!ValidadorDatos.esNombreUsuarioValido(nombreUsuario)) {
-            mostrarMensaje("El nombre de usuario debe tener al menos 4 caracteres");
+            mostrarMensaje("El nombre de usuario debe tener al menos 3 caracteres y no llevar espacios");
             return false;
         }
 
-        if (!ValidadorDatos.esContrasenaValida(contrasena)) {
-            mostrarMensaje("La contraseña debe tener al menos 6 caracteres");
+        // En edición, vacío significa "no cambiar el PIN"
+        boolean omitirPin = esEdicion && contrasena.isEmpty();
+        if (!omitirPin && !ValidadorDatos.esPinValido(contrasena)) {
+            mostrarMensaje("El PIN debe tener exactamente 4 dígitos");
             return false;
         }
 
@@ -239,7 +287,7 @@ public class ActividadFormularioUsuario extends AppCompatActivity {
         }
 
         if (!ValidadorDatos.esTelefonoValido(telefono)) {
-            mostrarMensaje("El teléfono debe tener 10 dígitos");
+            mostrarMensaje("El teléfono debe tener entre 8 y 15 dígitos");
             return false;
         }
 

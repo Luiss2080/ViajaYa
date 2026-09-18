@@ -21,7 +21,9 @@ import com.example.goride.R;
 import com.example.goride.modelo.entidades.Usuario;
 import com.example.goride.modelo.repositorio.RepositorioUsuario;
 import com.example.goride.modelo.utilidades.GestorSesion;
+import com.example.goride.modelo.utilidades.HashContrasena;
 import com.example.goride.modelo.utilidades.InicializadorDatos;
+import com.example.goride.modelo.utilidades.LimitadorIntentos;
 import com.example.goride.modelo.utilidades.ValidadorDatos;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -52,6 +54,11 @@ public class ActividadLogin extends AppCompatActivity {
     private static final int MENSAJE_EXITO = 3;
 
     private int intentosFallidos = 0;
+
+    // El PIN es de solo 4 dígitos: se bloquea el usuario 60 s tras 5 fallos seguidos
+    private static final int MAX_INTENTOS = 5;
+    private static final long BLOQUEO_MS = 60_000L;
+    private static final LimitadorIntentos limitador = new LimitadorIntentos(MAX_INTENTOS, BLOQUEO_MS);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -270,10 +277,17 @@ public class ActividadLogin extends AppCompatActivity {
             return;
         }
 
-        // Intentar autenticar
-        Usuario usuario = repositorioUsuario.autenticar(nombreUsuario, contrasena);
+        long ahora = System.currentTimeMillis();
+        long restante = limitador.msRestantes(nombreUsuario, ahora);
+        if (restante > 0) {
+            mostrarMensaje("Demasiados intentos fallidos. Espera " + ((restante + 999) / 1000) + " s");
+            return;
+        }
+
+        Usuario usuario = autenticar(nombreUsuario, contrasena);
 
         if (usuario != null) {
+            limitador.registrarExito(nombreUsuario);
             // Guardar sesión
             gestorSesion.iniciarSesion(
                 usuario.getIdUsuario(),
@@ -285,9 +299,32 @@ public class ActividadLogin extends AppCompatActivity {
             // Ir al menú principal
             irAMenuPrincipal();
         } else {
+            limitador.registrarFallo(nombreUsuario, ahora);
             intentosFallidos++;
             mostrarMensajeDinamico(MENSAJE_ERROR, null);
         }
+    }
+
+    /**
+     * Comprueba usuario, estado y PIN contra el hash almacenado. Si la cuenta viene de una
+     * versión anterior con la contraseña en texto plano, se acepta una sola vez y se migra a hash.
+     * Devuelve null si las credenciales no son válidas o la cuenta está inactiva.
+     */
+    private Usuario autenticar(String nombreUsuario, String pin) {
+        Usuario usuario = repositorioUsuario.obtenerPorNombreUsuario(nombreUsuario);
+        if (usuario == null || !"Activo".equals(usuario.getEstado())) {
+            return null;
+        }
+        String almacenado = usuario.getContrasena();
+        if (HashContrasena.esHash(almacenado)) {
+            return HashContrasena.verificar(pin, almacenado) ? usuario : null;
+        }
+        if (almacenado != null && almacenado.equals(pin)) {
+            usuario.setContrasena(HashContrasena.generar(pin));
+            repositorioUsuario.actualizar(usuario);
+            return usuario;
+        }
+        return null;
     }
 
     /**

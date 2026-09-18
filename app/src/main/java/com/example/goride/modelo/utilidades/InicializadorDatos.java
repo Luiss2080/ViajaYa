@@ -50,15 +50,15 @@ public class InicializadorDatos {
     }
 
     private void inicializarUsuarios() {
-        repositorioUsuario.crear(new Usuario("admin", "admin123", "Administrador del Sistema",
+        repositorioUsuario.crear(new Usuario("admin", HashContrasena.generar("1234"), "Administrador del Sistema",
             "admin@goride.com", "3001234567", 1, "Activo", UtilidadesFecha.obtenerFechaActual()));
-        repositorioUsuario.crear(new Usuario("juan_perez", "cliente123", "Juan Pérez García",
+        repositorioUsuario.crear(new Usuario("juan_perez", HashContrasena.generar("5678"), "Juan Pérez García",
             "juan.perez@correo.com", "3101234567", 2, "Activo", UtilidadesFecha.obtenerFechaActual()));
-        repositorioUsuario.crear(new Usuario("maria_lopez", "cliente123", "María López Ramírez",
+        repositorioUsuario.crear(new Usuario("maria_lopez", HashContrasena.generar("5678"), "María López Ramírez",
             "maria.lopez@correo.com", "3201234567", 2, "Activo", UtilidadesFecha.obtenerFechaActual()));
-        repositorioUsuario.crear(new Usuario("carlos_driver", "conductor123", "Carlos Rodríguez Mora",
+        repositorioUsuario.crear(new Usuario("carlos_driver", HashContrasena.generar("9999"), "Carlos Rodríguez Mora",
             "carlos.rodriguez@correo.com", "3151234567", 3, "Activo", UtilidadesFecha.obtenerFechaActual()));
-        repositorioUsuario.crear(new Usuario("ana_driver", "conductor123", "Ana Martínez Soto",
+        repositorioUsuario.crear(new Usuario("ana_driver", HashContrasena.generar("9999"), "Ana Martínez Soto",
             "ana.martinez@correo.com", "3181234567", 3, "Activo", UtilidadesFecha.obtenerFechaActual()));
     }
 

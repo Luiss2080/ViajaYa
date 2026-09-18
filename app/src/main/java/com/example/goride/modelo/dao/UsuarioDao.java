@@ -20,8 +20,8 @@ public interface UsuarioDao {
     Usuario obtenerPorId(int idUsuario);
     @Query("SELECT * FROM usuarios WHERE nombre_usuario = :nombreUsuario")
     Usuario obtenerPorNombreUsuario(String nombreUsuario);
-    @Query("SELECT * FROM usuarios WHERE nombre_usuario = :nombreUsuario AND contrasena = :contrasena")
-    Usuario autenticar(String nombreUsuario, String contrasena);
+    @Query("SELECT * FROM usuarios WHERE correo_electronico = :correo")
+    Usuario obtenerPorCorreo(String correo);
     @Query("SELECT * FROM usuarios WHERE id_rol = :idRol")
     List<Usuario> obtenerPorRol(int idRol);
     @Query("SELECT * FROM usuarios WHERE estado = :estado")
